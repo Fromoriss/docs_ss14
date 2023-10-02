@@ -1,18 +1,20 @@
 # Метаболізм
 
-Metabolism in SS14 is very different to metabolism in SS13. In SS13, reagents simply had a proc `on_mob_life` that was called to determine what should happen. Our system is much more modular and allows for things like different organs metabolizing different reagents, and species-specific metabolisms, as well as overdoses or underdoses without any hassle.
+Метаболізм у SS14 дуже відрізняється від метаболізму в SS13. В SS13 реагенти просто мали функцію `on_mob_life`, яка викликалася для визначення того, що має статися. Наша система набагато більш модульна і дозволяє без проблем враховувати такі речі, як різні органи, що метаболізують різні реагенти, специфічний для окремого виду метаболізм, а також передозування або недостатнє дозування.
 
-## Organs & Metabolizers
+## Органи & Метаболізатори
 
-In SS14, organs are entities with a `MechanismComponent` (mechanism just being a catch-all term for 'organ'.) Organs also have other components that give them decoupled behavior; `StomachComponent`, `CirculatorComponent`, `RespiratorComponent`, and so on. However, the important one here is `MetabolizerComponent.`
+В даному контексті, метаболізатори це сутності, що метаболізують (наприклад шлунок).
 
-Metabolizers (organs with that component) define a list of 'metabolism groups' that they metabolize. 'Metabolism groups' are things like 'Narcotic', or 'Food', or 'Medicine'. This allows us to define how organs metabolize different chemicals.
+У SS14 органи є сутностями з компонентом `MechanismComponent` (механізм це просто загальний термін для 'органу'). Органи також мають інші компоненти, які надають їм відокремлену поведінку; `StomachComponent`, `CirculatorComponent`, `RespiratorComponent` і так далі. Однак, найважливішим тут є компонент `MetabolizerComponent`.
 
-This is on `OrganHumanStomach`. Meaning, the stomach processes any reagents with a `Food` metabolism, or a `Drink` metabolism:
+Метаболізатори (тобто органи з компонентом `MetabolizerComponent`) мають перелік груп метаболізму, які вони метаболізують. "Групи метаболізму" - це такі речовини, як "Наркотики", "Їжа" або "Ліки" (у коді вони визначені як 'Narcotic', 'Food', 'Medicine' відповідно). Це дозволяє нам керувати тим, як органи метаболізують різні хімічні речовини.
+
+Наприклад це - сутність `OrganHumanStomach`. Цей запис означає, що шлунок перетравлює будь-які реагенти з типами метаболізму "Їжа" або "Напої" (відповідно `Food та `Drink` у коді):
 
 ```yml
   - type: Metabolizer
-    # mm yummy
+    # а пахне як~
     maxReagents: 3
     metabolizerTypes: [Human]
     groups:
@@ -20,13 +22,13 @@ This is on `OrganHumanStomach`. Meaning, the stomach processes any reagents with
     - id: Drink
 ```
 
-Metabolizers can only process so many reagents at once, to avoid the common situation in SS13 where stacking a ton of poisons on one entity would damage it significantly more than just one concentrated poison.
+Метаболізатори можуть переробляти лише стільки реагентів одночасно, щоб уникнути поширеної проблеми з SS13, коли накопичення тонни отрут на одному об'єкті завдало б йому значно більшої шкоди, ніж одна концентрована отрута.
 
-Metabolism rate is defined on the organ. Generally, its once per second, and chems are taken from the bloodstream.
+Швидкість метаболізму визначається в коді органу. Як правило, це раз на секунду, і хімічні речовини беруться з кровотоку.
 
-## Species
+## Види
 
-Defining how different species react to different chemicals is quite easy. Metabolizers are tagged with 'organ types', which is essentially a species marker, but localized to the organ (so if you swap out your heart for a gorilla heart, you'll metabolize medicines/poisons/etc in the same way a gorilla does). Then, you can use the `OrganType` condition to check. Here's an example in the codebase, of theobromine (a chemical found in chocolate):
+Визначити, який вплив мають різні хімічні речовини на різні види, досить легко. Метаболізатори мають тег "тип органу", який по суті є позначкою виду, але ця позначка прив'язана до органу (тобто, якщо ви заміните своє серце на серце горили, ви будете метаболізувати ліки/отрути/тощо, так само як це робить горила). Далі, ви можете використовувати умову `OrganType` для перевірки. Ось приклад теоброміну (хімічна речовина, що міститься у шоколаді), як його реалізовано у коді:
 
 ```yml
   metabolisms:
@@ -37,10 +39,10 @@ Defining how different species react to different chemicals is quite easy. Metab
         - !type:ReagentThreshold
           min: 1
         - !type:OrganType
-          type: Animal # Applying damage to the mobs with lower metabolism capabilities
+          type: Animal # Нанесення шкоди мобам з низькими можливостями до метаболізму
         damage:
           types:
             Poison: 4
 ```
 
-As the comment suggests, to humans this chemical does nothing, but to animals (things with animal organs) it can be deadly.
+Як випливає з коментаря, для людей ця хімічна речовина нічого не робить, але для тварин (будь-чого з органами тварин) вона може бути смертельною.
