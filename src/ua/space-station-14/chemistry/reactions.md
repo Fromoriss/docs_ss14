@@ -1,12 +1,12 @@
-# Reactions
+# Реакції
 
-Reaction prototypes define recipes with ratios of reagents required to cause a chemical reaction.  Below are the reaction yaml config values:
+Прототипи реакцій визначають рецепти зі співвідношенням реагентів, необхідних для проведення хімічної реакції. Нижче наведені значення параметрів конфігурації реакції:
 
-`type`: The prototype type. Should always be `reaction`.
-`id`: Unique id used by the game to identify the reaction. In `PasacalCase`
-`reactants`: A list of reactants required for the reaction to occur. Each reactant specifies it’s ratio and if it’s a catalyst. See the example below for more info.
-`products`: A list of reagents created as a result of the reaction. They will be add to the solution container the reaction occurs in if there is room.
-`effects`: A list of effects and their properties. Each effect corresponds to a C# class that implements IReactionEffect. See the example below for more info.
+`type`: Тип прототипу. Завжди має бути `reaction`.
+`id`: Унікальний ідентифікатор, що використовується грою для ідентифікації реакції. Формат запису - `PasacalCase`.
+`reactants`: Список реагентів, необхідних для виконання реакції. Для кожного реагенту вказується його пропорція та чи є він каталізатором. Дивіться приклад нижче для отримання додаткової інформації.
+`products`: Список реагентів, що утворюються в результаті реакції. Вони будуть додані до контейнера з розчином, в якому відбувається реакція, якщо там достатньо вільного місця.
+`effects`: Список ефектів та їх параметрів. Кожному ефекту відповідає C# клас, який наслідує `IReactionEffect`. Дивіться приклад нижче для отримання додаткової інформації.
 
 ```yaml
 - type: reaction
@@ -16,19 +16,19 @@ Reaction prototypes define recipes with ratios of reagents required to cause a c
       amount: 1
     Potassium:
       amount: 1
-  effects: # Reaction effects
+  effects: # Ефекти, що відбуваються під час реакції
     - !type:ExplosionReactionEffect
-      # Ranges used when 1 potassium + 1 water react (A unit reaction)
+      # Ці діапазони дійсні при реакції 1 калій + 1 вода (тобто ефект з силою 1 юніт)
       devastationRange: 0.05
       heavyImpactRange: 0.1
       lightImpactRange: 0.15
       flashRange: 0.2
-      scaled: true # Scaled proportionally to amount of potassium and water
-      maxScale: 30 # Explosion strength stops scaling at 30 potassium + 30 water
+      scaled: true # Масштабується пропорційно до кількості калію та води що реагують
+      maxScale: 30 # Сила вибуху перестає зростати при реагуючих 30 калію + 30 води
 
 ```
 
-Here’s another example. This one has a catalyst, and some chemical products, but no reaction effect. Note that reactants are only catalysts if directly specified, and will be consumed otherwise.
+Ось ще один приклад. Тут є каталізатор і деякі хімічні продукти, але немає ефекту реакції. Зауважте, що реагент є каталізатором лише тоді, коли це прямо вказано, бо в іншому випадку він буде спожитий.
 
 ```yaml
 - type: reaction
@@ -38,7 +38,7 @@ Here’s another example. This one has a catalyst, and some chemical products, b
       amount: 1
     Chlorine:
       amount: 1
-      catalyst: True # False if not specified
+      catalyst: True # Якщо не вказувати, по стандарту йому призначиться значення False
     Potassium:
       amount: 1
   products:
